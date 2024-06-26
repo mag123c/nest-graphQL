@@ -1,0 +1,61 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Comment {
+  author: User!
+  authorId: Int!
+  content: String!
+  createdAt: DateTime!
+  id: Int!
+  post: Post!
+  postId: Int!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Mutation {
+  writePost(postInput: WritePostReq!): WritePostRes!
+}
+
+type Post {
+  author: User!
+  authorId: Int!
+  comments: [Comment!]
+  content: String!
+  createdAt: DateTime!
+  id: Int!
+  likes: Float!
+  title: String!
+}
+
+type Query {
+  posts(authorId: Float): [Post!]!
+  user: User!
+  users: [User!]!
+}
+
+type User {
+  comments: [Comment!]
+  createdAt: DateTime!
+  email: String!
+  id: Int!
+  nickname: String!
+  posts: [Post!]
+  thumbnail: String
+}
+
+input WritePostReq {
+  authorId: Int!
+  content: String!
+  title: String!
+}
+
+type WritePostRes {
+  createdAt: DateTime!
+  nickname: String!
+  title: String!
+}
