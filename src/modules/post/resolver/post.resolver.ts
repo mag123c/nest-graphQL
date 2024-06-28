@@ -23,6 +23,18 @@ export class PostResolver {
         return this.postRepo.findAll(authorId);
     }
 
+    @ResolveField(() => User)
+    async author(@Parent() post: Post): Promise<User> {
+        console.log('글의 작성자를 가져오는 리졸버')
+        return await this.userRepo.findOne(post.authorId);
+    }
+
+    @ResolveField(() => [Comment])
+    async comments(@Parent() post: Post): Promise<Comment[]> {
+        console.log('코멘트를 가져오는 리졸버')
+        return await this.commentRepo.findByPostId(post.id);
+    }
+
     @Mutation(() => WritePostRes)
     async writePost(
         @Args('postInput') postInput: WritePostReq,
@@ -36,17 +48,4 @@ export class PostResolver {
             createdAt: post.createdAt,
         };
     }    
-
-    @ResolveField(() => User)
-    async author(@Parent() post: Post): Promise<User> {
-        console.log('글의 작성자를 가져오는 리졸버')
-        return await this.userRepo.findOne(post.authorId);
-    }
-
-    @ResolveField(() => [Comment])
-    async comments(@Parent() post: Post): Promise<Comment[]> {
-        console.log('코멘트를 가져오는 리졸버')
-        return await this.commentRepo.findByPostId(post.id);
-    }
-
 }
