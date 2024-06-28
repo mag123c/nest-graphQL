@@ -19,19 +19,16 @@ export class PostResolver {
     async posts(
         @Args('authorId', { type: () => Number, nullable: true }) authorId?: number,
     ): Promise<Post[]> {
-        console.log('전체 글 목록을 가져오는 리졸버')
         return this.postRepo.findAll(authorId);
     }
 
     @ResolveField(() => User)
     async author(@Parent() post: Post): Promise<User> {
-        console.log('글의 작성자를 가져오는 리졸버')
         return await this.userRepo.findOne(post.authorId);
     }
 
     @ResolveField(() => [Comment])
     async comments(@Parent() post: Post): Promise<Comment[]> {
-        console.log('코멘트를 가져오는 리졸버')
         return await this.commentRepo.findByPostId(post.id);
     }
 

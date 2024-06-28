@@ -9,7 +9,6 @@ export class CommentResolver {
 
     @ResolveField(() => User)
     async author(@Parent() comment: Comment): Promise<User> {
-        console.log('코멘트의 작성자를 가져오는 리졸버')
         return await this.userRepo.findOne(comment.authorId);
     }
 }
