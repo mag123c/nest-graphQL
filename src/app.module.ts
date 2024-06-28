@@ -1,5 +1,6 @@
 import { ApolloDriver, ApolloDriverConfig } from "@nestjs/apollo";
 import { Module } from "@nestjs/common";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { GraphQLModule } from "@nestjs/graphql";
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Comment } from "./modules/post/entities/comment.entity";
@@ -10,25 +11,31 @@ import { UserModule } from "./modules/user/user.module";
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       playground: true,
       autoSchemaFile: 'src/common/graphql/schema.gql',
       sortSchema: true,
     }),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '1234',
-      database: 'graphQL',
-      logging: true,
-      entities: [
-        Post,
-        User,
-        Comment
-      ]
+    TypeOrmModule.forRootAsync({
+      useFactory: async (configService: ConfigService) => ({
+        type: 'mysql',
+        host: process.env.DB_HOST || 'localhost',
+        port: 3306,
+        username: process.env.DB_USERNAME || 'root',
+        password: process.env.DB_PASSWORD || 'password',
+        database: process.env.DB_SCHEMA || 'graphQL',
+        logging: true,
+        entities: [
+          Post,
+          User,
+          Comment
+        ],
+      }),
+      inject: [ConfigService],
     }),
     PostModule,
     UserModule,
@@ -36,4 +43,4 @@ import { UserModule } from "./modules/user/user.module";
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }
